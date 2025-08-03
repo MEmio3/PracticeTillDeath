@@ -1,0 +1,203 @@
+public class DummyHeadedSinglyCircularLinkedList {
+
+    // Node class for dummy-headed circular singly linked list
+    private static class Node {
+        int elem;
+        Node next;
+
+        Node(int elem) {
+            this.elem = elem;
+        }
+    }
+
+    private Node head;  // dummy head; head.next points to first real node or head if empty
+
+    // Constructor: initialize dummy head pointing to itself
+    public DummyHeadedSinglyCircularLinkedList() {
+        head = new Node(0);
+        head.next = head;
+    }
+
+    // 1. Create circular list from array
+    public void createFromArray(int[] arr) {
+        head.next = head;  // reset to empty circle
+        if (arr == null || arr.length == 0) return;
+        Node curr = head;
+        for (int value : arr) {
+            Node n = new Node(value);
+            curr.next = n;
+            curr = n;
+        }
+        curr.next = head;  // close the circle
+    }
+
+    // 2. Iterate through the list once
+    public void iterate() {
+        if (head.next == head) {
+            System.out.println("List is empty");
+            return;
+        }
+        Node curr = head.next;
+        do {
+            System.out.print(curr.elem + " -> ");
+            curr = curr.next;
+        } while (curr != head);
+        System.out.println("(back to head)");
+    }
+
+    // 3. Count nodes
+    public int count() {
+        int cnt = 0;
+        Node curr = head.next;
+        while (curr != head) {
+            cnt++;
+            curr = curr.next;
+        }
+        return cnt;
+    }
+
+    // 4. Index of element (first match) or -1
+    public int indexOf(int elem) {
+        int idx = 0;
+        Node curr = head.next;
+        while (curr != head) {
+            if (curr.elem == elem) return idx;
+            curr = curr.next;
+            idx++;
+        }
+        return -1;
+    }
+
+    // 5. Get node at index or null if out of bounds
+    public Node getNode(int index) {
+        if (index < 0) return null;
+        int i = 0;
+        Node curr = head.next;
+        while (curr != head) {
+            if (i == index) return curr;
+            curr = curr.next;
+            i++;
+        }
+        return null;
+    }
+
+    // 6. Update value at index
+    public boolean update(int index, int newValue) {
+        Node node = getNode(index);
+        if (node != null) {
+            node.elem = newValue;
+            return true;
+        }
+        return false;
+    }
+
+    // 7. Search for element
+    public boolean search(int elem) {
+        return indexOf(elem) != -1;
+    }
+
+    // 8. Insert element at index
+    public void insert(int index, int elem) {
+        int size = count();
+        if (index < 0) index = 0;
+        if (index > size) index = size;
+        Node prev = head;
+        for (int i = 0; i < index; i++) {
+            prev = prev.next;
+        }
+        Node n = new Node(elem);
+        n.next = prev.next;
+        prev.next = n;
+    }
+
+    // 9. Remove node at index
+    public void remove(int index) {
+        int size = count();
+        if (index < 0 || index >= size) return;
+        Node prev = head;
+        for (int i = 0; i < index; i++) {
+            prev = prev.next;
+        }
+        prev.next = prev.next.next;
+    }
+
+    // 10. Deep copy
+    public DummyHeadedSinglyCircularLinkedList copy() {
+        DummyHeadedSinglyCircularLinkedList copy = new DummyHeadedSinglyCircularLinkedList();
+        Node curr = head.next;
+        Node tail = copy.head;
+        while (curr != head) {
+            Node n = new Node(curr.elem);
+            tail.next = n;
+            tail = n;
+            curr = curr.next;
+        }
+        tail.next = copy.head;
+        return copy;
+    }
+
+    // 11. Out-of-place reverse
+    public DummyHeadedSinglyCircularLinkedList reverseOutOfPlace() {
+        DummyHeadedSinglyCircularLinkedList rev = new DummyHeadedSinglyCircularLinkedList();
+        Node curr = head.next;
+        while (curr != head) {
+            Node n = new Node(curr.elem);
+            n.next = rev.head.next;
+            rev.head.next = n;
+            curr = curr.next;
+        }
+        // find tail of rev to close circle
+        Node tail = rev.head;
+        while (tail.next != null && tail.next != rev.head) {
+            tail = tail.next;
+        }
+        tail.next = rev.head;
+        return rev;
+    }
+
+    // 12. In-place reverse
+    public void reverseInPlace() {
+        Node prev = head;
+        Node curr = head.next;
+        while (curr != head) {
+            Node next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head.next = prev;
+    }
+
+    // 13. Rotate left by k
+    public void rotateLeft(int k) {
+        int size = count();
+        if (size == 0) return;
+        k = ((k % size) + size) % size;
+        for (int i = 0; i < k; i++) {
+            head = head.next;  // move dummy head forward
+        }
+    }
+
+    // 14. Rotate right by k
+    public void rotateRight(int k) {
+        rotateLeft(-k);
+    }
+
+    // Demo
+    public static void main(String[] args) {
+        DummyHeadedSinglyCircularLinkedList dl = new DummyHeadedSinglyCircularLinkedList();
+        dl.createFromArray(new int[]{1,2,3,4,5});
+        dl.iterate();
+        System.out.println("Count: " + dl.count());
+        System.out.println("Index of 3: " + dl.indexOf(3));
+        dl.update(1, 10); dl.iterate();
+        System.out.println("Search 4: " + dl.search(4));
+        dl.insert(0, 99); dl.insert(3, 77); dl.insert(dl.count(), 55); dl.iterate();
+        dl.remove(2); dl.iterate();
+        DummyHeadedSinglyCircularLinkedList copy = dl.copy(); System.out.print("Copy: "); copy.iterate();
+        DummyHeadedSinglyCircularLinkedList rev = dl.reverseOutOfPlace(); System.out.print("Reversed new: "); rev.iterate();
+        dl.reverseInPlace(); System.out.print("Reversed in-place: "); dl.iterate();
+        dl.rotateLeft(2); System.out.print("Rotated left 2: "); dl.iterate();
+        dl.rotateRight(3); System.out.print("Rotated right 3: "); dl.iterate();
+    }
+}
