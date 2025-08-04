@@ -95,7 +95,10 @@ public class SinglyLinkedList {
         }
         return false;
     }
-
+    public void clear() 
+    {
+        head = null; // Clear the list by setting head to null
+    }
     // 8. Insert a node in the list
     public void insert(int index, int elem) {
         Node newNode = new Node(elem);
