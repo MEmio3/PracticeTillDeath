@@ -24,6 +24,21 @@ public class SinglyLinkedList {
             current = current.next;
         }
     }
+    public void createFromArray2D(int[][]arr) {
+        if (arr == null || arr.length == 0) return;
+        Node current = head;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                if(i==0 && j==0) {
+                    head = new Node(arr[i][j]);
+                    current = head;
+                    continue;
+                }
+                current.next = new Node(arr[i][j]);
+                current = current.next;
+            }
+        }
+    }
 
     // 2. Iteration of the linked list
     public void iterate() {
