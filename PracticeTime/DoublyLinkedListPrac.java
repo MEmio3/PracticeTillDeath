@@ -227,6 +227,103 @@ public class DoublyLinkedListPrac
         }
         return reversedList; // return the new reversed list
     } 
+    public void reverseInPlace() {
+        if (head == null || head.next == null) return;
+        Node current = head;
+        Node temp = null;
+        tail = head; // update tail to current head
+        while (current != null) {
+            // Swap next and prev pointers      
+            temp = current.prev;
+            current.prev = current.next;
+            current.next = temp;
+            // Move to the next node (which is now prev)
+            current = current.prev; // current.prev is now the next node
+        }
+        head = temp; // temp is now the new head (last processed node)
+        if (head != null) head.prev = null;
+        if (tail != null) tail.next = null; // ensure tail's next is null
+    }
 
+    // 13. Rotate the list left by k positions
+    public void rotateLeft(int k) {
+        if (head == null || k <= 0) return;
+        int size = count();
+        k = k % size;   
+        if (k == 0) return; // no rotation needed
+        Node newTail = head;
+        for (int i = 0; i < k - 1 && newTail != null; i++) {
+            newTail = newTail.next; // find the new tail
+        }   
+        if (newTail == null || newTail.next == null) return; // no rotation needed
+        Node newHead = newTail.next; // new head is the next node
+        newTail.next = null;
+        if (newHead != null) {
+            newHead.prev = null; // new head has no previous
+        }   
+        tail.next = head; // link old tail to old head
+        head.prev = tail;
+        head = newHead; // update head to new head
+        tail = newTail; // update tail to new tail
+    }   
+    // 14. Rotate the list right by k positions
+    public void rotateRight(int k) {
+        if (head == null || k <= 0) return;
+        int size = count();
+        k = k % size;   
+        if (k == 0) return;
+        Node newTail = head;
+        for (int i = 0; i < size - k - 1 && newTail != null; i++) {
+            newTail = newTail.next; // find the new tail
+        }
+        if (newTail == null || newTail.next == null) return; // no rotation needed
+        Node newHead = newTail.next;
+        tail.next = head; // link old tail to old head
+        head.prev = tail;
+        newTail.next = null; // new tail's next is null
+        if (newHead != null) {
+            newHead.prev = null; // new head has no previous
+        }
+        head = newHead; // update head to new head
+        tail = newTail; // update tail to new tail
+    }
+    // Main method for testing
+    public static void main(String[] args) {
+        DoublyLinkedListPrac list = new DoublyLinkedListPrac();
+        int[] arr = {1, 2, 3, 4, 5};    
+        list.createFromArray(arr);
+        System.out.println("Iterate Forward:");
+        list.iterateForward();
+        System.out.println("Iterate Backward:");
+        list.iterateBackward();
+        System.out.println("Count: " + list.count());
+        System.out.println("Index of 3: " + list.indexOf(3));
+        System.out.println("Get Node at index 2: " + list.getNode(2).elem);
+        list.update(2, 10);
+        System.out.println("After updating index 2 to 10:");
+        list.iterateForward();
+        System.out.println("Search for 10: " + list.search(10));
+        list.insert(2, 20);
+        System.out.println("After inserting 20 at index 2:");
+        list.iterateForward();
+        list.remove(2);
+        System.out.println("After removing node at index 2:");
+        list.iterateForward();
+        DoublyLinkedListPrac copiedList = list.copy();
+        System.out.println("Copied List:");
+        copiedList.iterateForward();
+        DoublyLinkedListPrac reversedList = list.reverseOutOfPlace();
+        System.out.println("Reversed List (out-of-place):");
+        reversedList.iterateForward();
+        list.reverseInPlace();
+        System.out.println("Reversed List (in-place):");
+        list.iterateForward();
+        list.rotateLeft(2);
+        System.out.println("After rotating left by 2:");
+        list.iterateForward();
+        list.rotateRight(2);
+        System.out.println("After rotating right by 2:");
+        list.iterateForward();
+    }
     
 }
